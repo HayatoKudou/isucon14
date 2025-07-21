@@ -58,13 +58,13 @@ USER: ubuntu
 ### スロークエリログの有効化(MySQL)
 
 - /etc/mysql/mysql.conf.d/mysqld.cnf のコメントアウトを外す
-- `sudo systemctl restart mysql`
+- `sudo systemctl restart mysql` で再起動
 - `long_query_time` を0にすることで、全てのクエリをスロークエリとして記録することができる
 - `show variables like 'slow%'` で設定の確認
 
 ```
-# slow_query_log                = 1
-# slow_query_log_file   = /var/log/mysql/mysql-slow.log
+# slow_query_log = 1
+# slow_query_log_file = /var/log/mysql/mysql-slow.log
 # long_query_time = 2
 # log-queries-not-using-indexes
 ```
@@ -72,6 +72,7 @@ USER: ubuntu
 ### スロークエリ解析
 
 pt-query-digest インストール
+ref: https://github.com/matsuu/docker-pt-query-digest
 
 ```bash
 mkdir ~/tools
@@ -84,7 +85,6 @@ pt-query-digest --version
 ```
 
 ベンチマーク計測
-ref: https://isucon-workshop.trap.show/text/chapter-3/1-SlowQueryLog.html#%E3%82%B9%E3%83%AD%E3%83%BC%E3%82%AF%E3%82%A8%E3%83%AA%E3%83%AD%E3%82%AF%E3%82%99%E3%81%AE%E8%A7%A3%E6%9E%90%E7%B5%90%E6%9E%9C%E3%81%AE%E3%81%BE%E3%81%A8%E3%82%81%E3%82%92%E8%A6%8B%E3%82%8B
 
 ```shell
 sudo -i -u isucon
@@ -92,16 +92,24 @@ sudo -i -u isucon
 ```
 
 pt-query-digest で解析
+ref: https://isucon-workshop.trap.show/text/chapter-3/1-SlowQueryLog.html#%E3%82%B9%E3%83%AD%E3%83%BC%E3%82%AF%E3%82%A8%E3%83%AA%E3%83%AD%E3%82%AF%E3%82%99%E3%81%AE%E8%A7%A3%E6%9E%90%E7%B5%90%E6%9E%9C%E3%81%AE%E3%81%BE%E3%81%A8%E3%82%81%E3%82%92%E8%A6%8B%E3%82%8B
 
 ```shell
 sudo pt-query-digest /var/log/mysql/mysql-slow.log
 ```
 
-ログテーション設定
+ログテーション設定 (任意)
 
 ```shell
 mkdir ~/log 
 sudo pt-query-digest /var/log/mysql/mysql-slow.log > ~/log/$(date +mysql-slow.log-%m-%d-%H-%M -d "+9 hours")
 sudo rm /var/log/mysql/mysql-slow.log
 sudo systemctl restart mysql # MySQLのログの出力先を消したため、再起動してログファイルを再生成
+```
+
+### DB適用(初期化スクリプト実行)
+
+```shell
+cd /home/isucon/webapp/sql
+./init.sh
 ```
