@@ -2,12 +2,14 @@
 
 ref: https://github.com/matsuu/aws-isucon/tree/main/isucon14
 
-## やること
+### サーバーセットアップ
 - 配布されているAMIからEC2インスタンスを立ち上げる
-    - セキュリティグループにHTTPS 443のインバウンドルール追加
-    - hostsファイルに `${サーバのIPアドレス} isuride.xiv.isucon.net` 登録
-- sshキーの設定
-- githubセットアップ
+- セキュリティグループにHTTPS 443のインバウンドルール追加
+- TODO: 言語別のサービス起動
+- hostsファイルに `${サーバのIPアドレス} isuride.xiv.isucon.net` 登録
+
+### githubセットアップ
+- TODO: sshキーの設定
 
 ```bash
 cd /home/isucon/webapp
@@ -21,6 +23,19 @@ git commit -m "Initial commit"
 git branch -M main
 git remote add origin git@github.com:HayatoKudou/isucon**.git
 git push -u origin main
+```
+
+### ローカルからDB接続
+
+```
+HOST: 127.0.0.1
+PORT: 3306
+USER: isucon
+PASS: isucon
+DATABASE: isuride
+SSH: SERVER: EC2のパプリックIP
+PORT: 22 # インバウンドルールに追加要
+USER: ubuntu
 ```
 
 ## ベンチマーク計測方法
